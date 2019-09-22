@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import axios from '../../../axios';
+import { Route } from 'react-router-dom';
 
 import Post from '../../../components/Post/Post';
 import './Posts.css';
+import FullPost from '../FullPost/FullPost';
 
 export class Posts extends Component {
 	state = {
@@ -12,6 +14,7 @@ export class Posts extends Component {
 	};
 
 	componentDidMount() {
+		console.log(this.props);
 		axios
 			.get('/posts')
 			.then(response => {
@@ -31,7 +34,8 @@ export class Posts extends Component {
 	}
 
 	postSelectedHandler = id => {
-		this.setState({ selectedId: id });
+		this.props.history.push('/posts/' + id);
+		// this.setState({ selectedId: id });
 	};
 	render() {
 		let posts = <p style={{ textAlign: 'center' }}>Something went Wrong</p>;
@@ -39,10 +43,10 @@ export class Posts extends Component {
 			posts = this.state.posts.map(post => {
 				return (
 					<Post
-						key={post.id}
 						title={post.title}
 						author={post.author}
 						clicked={() => this.postSelectedHandler(post.id)}
+						key={post.id}
 					/>
 				);
 			});
@@ -50,6 +54,7 @@ export class Posts extends Component {
 		return (
 			<div>
 				<section className="Posts">{posts}</section>
+				<Route path={`${this.props.match.url}/:id`} component={FullPost} />
 			</div>
 		);
 	}
